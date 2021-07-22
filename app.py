@@ -1,15 +1,16 @@
 from flask import Flask, request, jsonify
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
-from pandas import read_csv, DataFrame
 import csv
 import io
-import copy
+
 
 app = Flask(__name__)
 
 with app.app_context():
-    nltk.download('popular')
+    nltk.download('wordnet')
+    nltk.download('pros_cons')
+    nltk.download('reuters')
 
 
 def sentiment_analyzer(data):
@@ -28,25 +29,31 @@ def upload_csv_file():
     if not uploaded_file:
         return "No file"
     stream = io.StringIO(uploaded_file.stream.read().decode("UTF8"), newline=None)
-    stream1 = copy.copy(stream)
-    read_file = read_csv(stream)
 
-    df = DataFrame(read_file, columns=['presentation_skills', 'content_rating', 'overall_rating'])
-    presenting_skills = round(list(df.mean(axis=0))[0])
-    content_rating = round(list(df.mean(axis=0))[1])
+    overall_poor_counter = 0
+    overall_fair_counter = 0
+    overall_good_counter = 0
+    overall_very_good_counter = 0
+    overall_excellent_counter = 0
 
-    poor_counter = 0
-    fair_counter = 0
-    good_counter = 0
-    very_good_counter = 0
-    excellent_counter = 0
+    ps_excellent_counter = 0
+    ps_very_good_counter = 0
+    ps_good_counter = 0
+    ps_fair_counter = 0
+    ps_poor_counter = 0
+
+    cr_excellent_counter = 0
+    cr_very_good_counter = 0
+    cr_good_counter = 0
+    cr_fair_counter = 0
+    cr_poor_counter = 0
 
     negative_sentiment_counter = 0
     neutral_sentiment_counter = 0
     positive_sentiment_counter = 0
     total_rows = 0
 
-    csv_input = csv.DictReader(stream1)
+    csv_input = csv.DictReader(stream)
     for row in csv_input:
         total_rows += 1
         input_data = row['comment_for_presenting']
@@ -62,28 +69,64 @@ def upload_csv_file():
         else:
             neutral_sentiment_counter += 1
 
-        # Increase rating counters
-        if row['overall_rating'] == '5':
-            excellent_counter += 1
-        elif row['overall_rating'] == '4':
-            very_good_counter += 1
-        elif row['overall_rating'] == '3':
-            good_counter += 1
-        elif row['overall_rating'] == '2':
-            fair_counter += 1
-        elif row['overall_rating'] == '1':
-            poor_counter += 1
+        # Increase overall rating counters
+        if row['overall_rating'] == 'Excellent':
+            overall_excellent_counter += 1
+        elif row['overall_rating'] == 'Very Good':
+            overall_very_good_counter += 1
+        elif row['overall_rating'] == 'Good':
+            overall_good_counter += 1
+        elif row['overall_rating'] == 'Fair':
+            overall_fair_counter += 1
+        elif row['overall_rating'] == 'Poor':
+            overall_poor_counter += 1
+
+        # Increase presenting skills rating counters
+        if row['presentation_skills'] == 'Excellent':
+            ps_excellent_counter += 1
+        elif row['presentation_skills'] == 'Very Good':
+            ps_very_good_counter += 1
+        elif row['presentation_skills'] == 'Good':
+            ps_good_counter += 1
+        elif row['presentation_skills'] == 'Fair':
+            ps_fair_counter += 1
+        elif row['presentation_skills'] == 'Poor':
+            ps_poor_counter += 1
+
+        # Increase content rating counters
+        if row['content_rating'] == 'Excellent':
+            cr_excellent_counter += 1
+        elif row['content_rating'] == 'Very Good':
+            cr_very_good_counter += 1
+        elif row['content_rating'] == 'Good':
+            cr_good_counter += 1
+        elif row['content_rating'] == 'Fair':
+            cr_fair_counter += 1
+        elif row['content_rating'] == 'Poor':
+            cr_poor_counter += 1
 
     result = [{
         'total_reviews': total_rows,
-        'avg_presenting_skills_score': presenting_skills,
-        'avg_content_rating_score': content_rating,
-        'rating_score': {
-            'excellent': excellent_counter,
-            'very_good': very_good_counter,
-            'good': good_counter,
-            'fair': fair_counter,
-            'poor': poor_counter
+        'overall_rating_score': {
+            'excellent': overall_excellent_counter,
+            'very_good': overall_very_good_counter,
+            'good': overall_good_counter,
+            'fair': overall_fair_counter,
+            'poor': overall_poor_counter
+        },
+        'presenting_skills_rating_score': {
+            'excellent': ps_excellent_counter,
+            'very_good': ps_very_good_counter,
+            'good': ps_good_counter,
+            'fair': ps_fair_counter,
+            'poor': ps_poor_counter
+        },
+        'content_rating_score': {
+            'excellent': cr_excellent_counter,
+            'very_good': cr_very_good_counter,
+            'good': cr_good_counter,
+            'fair': cr_fair_counter,
+            'poor': cr_poor_counter
         },
         'overall_sentiment_score': {
             'positive': positive_sentiment_counter,
