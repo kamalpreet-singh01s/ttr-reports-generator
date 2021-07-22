@@ -1,1 +1,2 @@
 popular
+vader_lexicon
