@@ -7,11 +7,6 @@ import io
 
 app = Flask(__name__)
 
-with app.app_context():
-    nltk.download('wordnet')
-    nltk.download('pros_cons')
-    nltk.download('reuters')
-
 
 def sentiment_analyzer(data):
     sia = SentimentIntensityAnalyzer()
