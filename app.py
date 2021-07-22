@@ -13,7 +13,6 @@ with app.app_context():
     nltk.download('popular')
 
 
-
 def sentiment_analyzer(data):
     sia = SentimentIntensityAnalyzer()
     return sia.polarity_scores(data)
