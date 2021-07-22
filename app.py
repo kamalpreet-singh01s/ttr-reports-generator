@@ -1,5 +1,3 @@
-import json
-
 from flask import Flask, request, jsonify
 from nltk.sentiment import SentimentIntensityAnalyzer
 from pandas import read_csv, DataFrame
@@ -17,7 +15,7 @@ def sentiment_analyzer(data):
 
 @app.route('/')
 def hello_world():
-    return '01Synergy'
+    return "01Synergy"
 
 
 @app.route('/api/upload_csv_file', methods=['POST'])
