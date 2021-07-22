@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
 from pandas import read_csv, DataFrame
 import csv
@@ -6,6 +7,9 @@ import io
 import copy
 
 app = Flask(__name__)
+
+with app.app_context():
+    nltk.download('popular')
 
 
 def sentiment_analyzer(data):
