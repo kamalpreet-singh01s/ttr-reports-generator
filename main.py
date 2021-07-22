@@ -135,7 +135,3 @@ def upload_csv_file():
         }
     }]
     return jsonify(result)
-
-
-if __name__ == '__main__':
-    app.run()
