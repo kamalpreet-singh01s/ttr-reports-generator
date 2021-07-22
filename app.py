@@ -9,7 +9,9 @@ import copy
 app = Flask(__name__)
 
 with app.app_context():
+    nltk.download('wordnet')
     nltk.download('popular')
+
 
 
 def sentiment_analyzer(data):
