@@ -1,11 +1,13 @@
 from flask import Flask, request, jsonify
-import nltk
+from flask_cors import CORS
 from nltk.sentiment import SentimentIntensityAnalyzer
+from configurations import DevelopmentConfig
 import csv
 import io
 
-
 app = Flask(__name__)
+CORS(app)
+app.config.from_object(DevelopmentConfig)
 
 
 def sentiment_analyzer(data):
