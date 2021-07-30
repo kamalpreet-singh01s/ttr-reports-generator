@@ -29,7 +29,7 @@
 				<img src="{{url_for('static', filename='images/img-01.png') }}" alt="IMG">
 			</div>
 
-			<form class="contact1-form validate-form" action = "https://ttr-reports-generator.herokuapp.com/tech_tuesday_reviews_analysis" method = "post" enctype="multipart/form-data">
+			<form class="contact1-form validate-form" action = "{{ host_url }}tech_tuesday_reviews_analysis" method = "post" enctype="multipart/form-data">
 				<span class="contact1-form-title">
 					Tech Tuesday Reviews Analysis
 				</span>

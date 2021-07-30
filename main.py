@@ -11,7 +11,8 @@ app.config.from_object(DevelopmentConfig)
 
 @app.route("/")
 def hello_world():
-    return render_template('index.html')
+    host_url = request.host_url
+    return render_template('index.html', host_url=host_url)
 
 def sentiment_analyzer(data):
     sia = SentimentIntensityAnalyzer()
