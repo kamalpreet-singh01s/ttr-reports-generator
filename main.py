@@ -387,5 +387,5 @@ def upload_csv_file():
             'negative': sp_negative_sentiment_counter
         }
     }]
-    print(result)
+    
     return jsonify(result)
