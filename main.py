@@ -9,10 +9,12 @@ app = Flask(__name__)
 CORS(app)
 app.config.from_object(DevelopmentConfig)
 
+
 @app.route("/")
-def hello_world():
+def index():
     host_url = request.host_url
     return render_template('index.html', host_url=host_url)
+
 
 def sentiment_analyzer(data):
     sia = SentimentIntensityAnalyzer()
@@ -23,7 +25,7 @@ def sentiment_analyzer(data):
 def csv_analysis():
     uploaded_file = request.files['csv_file']
     if not uploaded_file:
-        return "No file Seleted"
+        return "No file Selected"
     stream = io.StringIO(
         uploaded_file.stream.read().decode("UTF8"), newline=None)
 
@@ -45,9 +47,22 @@ def csv_analysis():
     cr_fair_counter = 0
     cr_poor_counter = 0
 
-    negative_sentiment_counter = 0
-    neutral_sentiment_counter = 0
-    positive_sentiment_counter = 0
+    oa_negative_sentiment_counter = 0
+    oa_neutral_sentiment_counter = 0
+    oa_positive_sentiment_counter = 0
+
+    cp_negative_sentiment_counter = 0
+    cp_neutral_sentiment_counter = 0
+    cp_positive_sentiment_counter = 0
+
+    bl_negative_sentiment_counter = 0
+    bl_neutral_sentiment_counter = 0
+    bl_positive_sentiment_counter = 0
+
+    sp_negative_sentiment_counter = 0
+    sp_neutral_sentiment_counter = 0
+    sp_positive_sentiment_counter = 0
+
     total_rows = 0
 
     csv_input = csv.DictReader(stream)
@@ -57,16 +72,48 @@ def csv_analysis():
         input_data = row['comment_for_presenting']
         input_data1 = row['brief_learnt_detail']
         input_data2 = row['suggestion_for_presenting']
-        sentiment_dict = sentiment_analyzer(
+        oa_sentiment_dict = sentiment_analyzer(
             f'{input_data}, {input_data1}, {input_data2}')
 
-        # Decide sentiment as positive, negative and neutral
-        if sentiment_dict['compound'] >= 0.05:
-            positive_sentiment_counter += 1
-        elif sentiment_dict['compound'] <= - 0.05:
-            negative_sentiment_counter += 1
+        # Decide overall sentiment as positive, negative and neutral
+        if oa_sentiment_dict['compound'] >= 0.05:
+            oa_positive_sentiment_counter += 1
+        elif oa_sentiment_dict['compound'] <= - 0.05:
+            oa_negative_sentiment_counter += 1
         else:
-            neutral_sentiment_counter += 1
+            oa_neutral_sentiment_counter += 1
+
+        cp_sentiment_dict = sentiment_analyzer(f'{input_data}')
+
+        # Decide comment for presenting sentiment as positive, negative and neutral
+        if cp_sentiment_dict['compound'] >= 0.05:
+            cp_positive_sentiment_counter += 1
+        elif cp_sentiment_dict['compound'] <= - 0.05:
+            cp_negative_sentiment_counter += 1
+        else:
+            cp_neutral_sentiment_counter += 1
+
+        bl_sentiment_dict = sentiment_analyzer(
+            f'{input_data1}')
+
+        # Decide brief learnt sentiment as positive, negative and neutral
+        if bl_sentiment_dict['compound'] >= 0.05:
+            bl_positive_sentiment_counter += 1
+        elif bl_sentiment_dict['compound'] <= - 0.05:
+            bl_negative_sentiment_counter += 1
+        else:
+            bl_neutral_sentiment_counter += 1
+
+        sp_sentiment_dict = sentiment_analyzer(
+            f'{input_data2}')
+
+        # Decide suggestion for presentation sentiment as positive, negative and neutral
+        if sp_sentiment_dict['compound'] >= 0.05:
+            sp_positive_sentiment_counter += 1
+        elif sp_sentiment_dict['compound'] <= - 0.05:
+            sp_negative_sentiment_counter += 1
+        else:
+            sp_neutral_sentiment_counter += 1
 
         # Increase overall rating counters
         if row['overall_rating'].lower() == 'excellent':
@@ -104,19 +151,66 @@ def csv_analysis():
         elif row['content_rating'].lower() == 'poor':
             cr_poor_counter += 1
 
-    content_rate = {'Rating': 'Content Rating', 'Excellent': cr_excellent_counter, 'Very Good': cr_very_good_counter,
-                    'Good': cr_good_counter, 'Fair': cr_fair_counter, 'Poor': cr_poor_counter}
-    present_rate = {'Rating': 'Presenting Skillls Rating', 'Excellent': ps_excellent_counter, 'Very Good': ps_very_good_counter,
-                    'Good': ps_good_counter, 'Fair': ps_fair_counter, 'Poor': ps_poor_counter}
-    overall_rate = {'Rating': 'Overall Rating', 'Excellent': overall_excellent_counter, 'Very Good': overall_very_good_counter,
-                    'Good': overall_good_counter, 'Fair': overall_fair_counter, 'Poor': overall_poor_counter}
-    overall_sentiment = {'Rating': 'Overall Sentiment Score', 'Positive': positive_sentiment_counter, 'Neutral': neutral_sentiment_counter,
-                         'Negative': negative_sentiment_counter}
+    content_rate = {
+        'Rating': 'Content Rating',
+        'Excellent': cr_excellent_counter,
+        'Very Good': cr_very_good_counter,
+        'Good': cr_good_counter,
+        'Fair': cr_fair_counter,
+        'Poor': cr_poor_counter
+    }
+    present_rate = {
+        'Rating': 'Presenting Skills Rating',
+        'Excellent': ps_excellent_counter,
+        'Very Good': ps_very_good_counter,
+        'Good': ps_good_counter,
+        'Fair': ps_fair_counter,
+        'Poor': ps_poor_counter
+    }
+    overall_rate = {
+        'Rating': 'Overall Rating',
+        'Excellent': overall_excellent_counter,
+        'Very Good': overall_very_good_counter,
+        'Good': overall_good_counter,
+        'Fair': overall_fair_counter,
+        'Poor': overall_poor_counter
+    }
+    overall_sentiment = {
+        'Rating': 'Overall Sentiment Score',
+        'Positive': oa_positive_sentiment_counter,
+        'Neutral': oa_neutral_sentiment_counter,
+        'Negative': oa_negative_sentiment_counter
+    }
+
+    comment_for_presenting_sentiment = {
+        'Rating': 'Comment For Presenting Sentiment Score',
+        'Positive': cp_positive_sentiment_counter,
+        'Neutral': cp_neutral_sentiment_counter,
+        'Negative': cp_negative_sentiment_counter
+    }
+
+    brief_learnt_sentiment = {
+        'Rating': 'Brief Learnt Sentiment Score',
+        'Positive': bl_positive_sentiment_counter,
+        'Neutral': bl_neutral_sentiment_counter,
+        'Negative': bl_negative_sentiment_counter
+    }
+
+    suggestion_for_presenting_sentiment = {
+        'Rating': 'Suggestion For Presenting Sentiment Score',
+        'Positive': sp_positive_sentiment_counter,
+        'Neutral': sp_neutral_sentiment_counter,
+        'Negative': sp_negative_sentiment_counter
+    }
+
     data = {
         "content_rating": content_rate,
         "presenting_skills": present_rate,
         "overall_rating": overall_rate,
         "overall_sentiment": overall_sentiment,
+        "comment_for_presenting_sentiment": comment_for_presenting_sentiment,
+        "brief_learnt_sentiment": brief_learnt_sentiment,
+        "suggestion_for_presenting_sentiment": suggestion_for_presenting_sentiment
     }
 
     return render_template('google_pie_chart.html', data=data, reviews=total_rows, presenter=presenter_name)
@@ -127,7 +221,8 @@ def upload_csv_file():
     uploaded_file = request.files['file']
     if not uploaded_file:
         return "No file"
-    stream = io.StringIO(uploaded_file.stream.read().decode("UTF8"), newline=None)
+    stream = io.StringIO(
+        uploaded_file.stream.read().decode("UTF8"), newline=None)
 
     overall_poor_counter = 0
     overall_fair_counter = 0
@@ -147,9 +242,22 @@ def upload_csv_file():
     cr_fair_counter = 0
     cr_poor_counter = 0
 
-    negative_sentiment_counter = 0
-    neutral_sentiment_counter = 0
-    positive_sentiment_counter = 0
+    oa_negative_sentiment_counter = 0
+    oa_neutral_sentiment_counter = 0
+    oa_positive_sentiment_counter = 0
+
+    cp_negative_sentiment_counter = 0
+    cp_neutral_sentiment_counter = 0
+    cp_positive_sentiment_counter = 0
+
+    bl_negative_sentiment_counter = 0
+    bl_neutral_sentiment_counter = 0
+    bl_positive_sentiment_counter = 0
+
+    sp_negative_sentiment_counter = 0
+    sp_neutral_sentiment_counter = 0
+    sp_positive_sentiment_counter = 0
+
     total_rows = 0
 
     csv_input = csv.DictReader(stream)
@@ -158,15 +266,46 @@ def upload_csv_file():
         input_data = row['comment_for_presenting']
         input_data1 = row['brief_learnt_detail']
         input_data2 = row['suggestion_for_presenting']
-        sentiment_dict = sentiment_analyzer(f'{input_data}, {input_data1}, {input_data2}')
+        oa_sentiment_dict = sentiment_analyzer(
+            f'{input_data}, {input_data1}, {input_data2}')
 
-        # Decide sentiment as positive, negative and neutral
-        if sentiment_dict['compound'] >= 0.05:
-            positive_sentiment_counter += 1
-        elif sentiment_dict['compound'] <= - 0.05:
-            negative_sentiment_counter += 1
+        # Decide overall sentiment as positive, negative and neutral
+        if oa_sentiment_dict['compound'] >= 0.05:
+            oa_positive_sentiment_counter += 1
+        elif oa_sentiment_dict['compound'] <= - 0.05:
+            oa_negative_sentiment_counter += 1
         else:
-            neutral_sentiment_counter += 1
+            oa_neutral_sentiment_counter += 1
+
+        cp_sentiment_dict = sentiment_analyzer(f'{input_data}')
+
+        # Decide comment for presenting sentiment as positive, negative and neutral
+        if cp_sentiment_dict['compound'] >= 0.05:
+            cp_positive_sentiment_counter += 1
+        elif cp_sentiment_dict['compound'] <= - 0.05:
+            cp_negative_sentiment_counter += 1
+        else:
+            cp_neutral_sentiment_counter += 1
+
+        bl_sentiment_dict = sentiment_analyzer(f'{input_data1}')
+
+        # Decide brief learnt sentiment as positive, negative and neutral
+        if bl_sentiment_dict['compound'] >= 0.05:
+            bl_positive_sentiment_counter += 1
+        elif bl_sentiment_dict['compound'] <= - 0.05:
+            bl_negative_sentiment_counter += 1
+        else:
+            bl_neutral_sentiment_counter += 1
+
+        sp_sentiment_dict = sentiment_analyzer(f'{input_data2}')
+
+        # Decide suggestion for presentation sentiment as positive, negative and neutral
+        if sp_sentiment_dict['compound'] >= 0.05:
+            sp_positive_sentiment_counter += 1
+        elif sp_sentiment_dict['compound'] <= - 0.05:
+            sp_negative_sentiment_counter += 1
+        else:
+            sp_neutral_sentiment_counter += 1
 
         # Increase overall rating counters
         if row['overall_rating'] == 'Excellent':
@@ -228,9 +367,25 @@ def upload_csv_file():
             'poor': cr_poor_counter
         },
         'overall_sentiment_score': {
-            'positive': positive_sentiment_counter,
-            'neutral': neutral_sentiment_counter,
-            'negative': negative_sentiment_counter
+            'positive': oa_positive_sentiment_counter,
+            'neutral': oa_neutral_sentiment_counter,
+            'negative': oa_negative_sentiment_counter
+        },
+        'comment_for_presenting_sentiment': {
+            'positive': cp_positive_sentiment_counter,
+            'neutral': cp_neutral_sentiment_counter,
+            'negative': cp_negative_sentiment_counter
+        },
+        'brief_learnt_sentiment': {
+            'positive': bl_positive_sentiment_counter,
+            'neutral': bl_neutral_sentiment_counter,
+            'negative': bl_negative_sentiment_counter
+        },
+        'suggestion_for_presenting_sentiment': {
+            'positive': sp_positive_sentiment_counter,
+            'neutral': sp_neutral_sentiment_counter,
+            'negative': sp_negative_sentiment_counter
         }
     }]
+    print(result)
     return jsonify(result)

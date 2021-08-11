@@ -1,196 +1,325 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<meta charset="UTF-8">
-	<title>Tech Tuesday Reviews Analysis</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-<!--===============================================================================================-->
-	<link rel="icon" type="image/png" href="{{ url_for('static', filename='images/icons/favicon.ico') }}"/>
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='fonts/font-awesome-4.7.0/css/font-awesome.min.css') }}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/animate/animate.css') }}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/css-hamburgers/hamburgers.min.css') }}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/select2/select2.min.css') }}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/util.css') }}">
-	<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/main.css') }}">
-<!--===============================================================================================-->
+  <head>
+    <meta charset="UTF-8" />
+    <title>Tech Tuesday Reviews Analysis</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--===============================================================================================-->
+    <link
+      rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='images/icons/favicon.ico') }}"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='fonts/font-awesome-4.7.0/css/font-awesome.min.css') }}"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='vendor/animate/animate.css') }}"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='vendor/css-hamburgers/hamburgers.min.css') }}"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='vendor/select2/select2.min.css') }}"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='css/util.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{url_for('static', filename='css/main.css') }}"
+    />
+    <!--===============================================================================================-->
     <style>
-        * {
+      * {
         box-sizing: border-box;
         border: 2px;
-        }
-        /* Create two equal columns that floats next to each other */
-        .column {
+      }
+      /* Create two equal columns that floats next to each other */
+      .column {
         float: left;
         width: 50%;
         padding: 10px;
         border: 2px;
         height: 265px; /* Should be removed. Only for demonstration */
-        }
+      }
 
-        /* Clear floats after the columns */
-        .row:after {
+      /* Clear floats after the columns */
+      .row:after {
         content: "";
         display: table;
         clear: both;
-        }
+      }
     </style>
-	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script
+      type="text/javascript"
+      src="https://www.gstatic.com/charts/loader.js"
+    ></script>
     <script type="text/javascript">
-      google.charts.load("current", {packages:["corechart"]});
-      google.charts.setOnLoadCallback(drawContentRatingChart);
-      google.charts.setOnLoadCallback(drawPresentingSkillsChart);
-      google.charts.setOnLoadCallback(drawOverallRatingChart);
-      google.charts.setOnLoadCallback(drawOverallSentimentChart);
-      function drawContentRatingChart() {
-        var data = google.visualization.arrayToDataTable([
-			{% for key, value in data["content_rating"].items() %}
-				{% if value is string %}
-					['{{ key }}', '{{ value }}'],
-				{% else %}
-					['{{ key }}', {{ value }}],
-				{% endif %}
-			{% endfor %}
-        ]);
+         google.charts.load("current", {packages:["corechart"]});
+         google.charts.setOnLoadCallback(drawContentRatingChart);
+         google.charts.setOnLoadCallback(drawPresentingSkillsChart);
+         google.charts.setOnLoadCallback(drawOverallRatingChart);
+         google.charts.setOnLoadCallback(drawOverallSentimentChart);
+         google.charts.setOnLoadCallback(drawCommentForPresentingSentimentChart);
+         google.charts.setOnLoadCallback(drawBriefLearntSentimentChart);
+         google.charts.setOnLoadCallback(drawSuggestionForPresentingSentimentChart);
+         function drawContentRatingChart() {
+           var data = google.visualization.arrayToDataTable([
+      {% for key, value in data["content_rating"].items() %}
+      	{% if value is string %}
+      		['{{ key }}', '{{ value }}'],
+      	{% else %}
+      		['{{ key }}', {{ value }}],
+      	{% endif %}
+      {% endfor %}
+           ]);
 
-        var options = {
-          title: 'Content Rating',
-          is3D: true,
-          pieStartAngle: 100,
-          /*pieSliceText: 'label',*/
-          fontName: 'sans-serif',
-          fontSize: '15',
-            slices: {  
-                2: {offset: 0.2},
-                3: {offset: 0.3}
-            }
-        };
+           var options = {
+             title: 'Content Rating',
+             is3D: true,
+             pieStartAngle: 100,
+             /*pieSliceText: 'label',*/
+             fontName: 'sans-serif',
+             fontSize: '15',
+               slices: {
+                   2: {offset: 0.2},
+                   3: {offset: 0.3}
+               }
+           };
 
-        var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
-        chart.draw(data, options);
-      }
-        function drawPresentingSkillsChart() {
-        var data = google.visualization.arrayToDataTable([
-			{% for key, value in data["presenting_skills"].items() %}
-				{% if value is string %}
-					['{{ key }}', '{{ value }}'],
-				{% else %}
-					['{{ key }}', {{ value }}],
-				{% endif %}
-			{% endfor %}
-        ]);
+           var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+           chart.draw(data, options);
+         }
+         function drawPresentingSkillsChart() {
+           var data = google.visualization.arrayToDataTable([
+      {% for key, value in data["presenting_skills"].items() %}
+      	{% if value is string %}
+      		['{{ key }}', '{{ value }}'],
+      	{% else %}
+      		['{{ key }}', {{ value }}],
+      	{% endif %}
+      {% endfor %}
+           ]);
 
-        var options = {
-          title: 'Presenting Skills Rating',
-          is3D: true,
-          pieStartAngle: 100,
-          /*pieSliceText: 'label',*/
-          fontName: 'sans-serif',
-          fontSize: '15',
-          slices: {  
-            2: {offset: 0.2},
-            3: {offset: 0.3}
-          }
-        };
+           var options = {
+             title: 'Presenting Skills Rating',
+             is3D: true,
+             pieStartAngle: 100,
+             /*pieSliceText: 'label',*/
+             fontName: 'sans-serif',
+             fontSize: '15',
+             slices: {
+               2: {offset: 0.2},
+               3: {offset: 0.3}
+             }
+           };
 
-        var chart = new google.visualization.PieChart(document.getElementById('piechart_3d1'));
-        chart.draw(data, options);
-      }
+           var chart = new google.visualization.PieChart(document.getElementById('piechart_3d1'));
+           chart.draw(data, options);
+         }
 
-       function drawOverallRatingChart() {
-        var data = google.visualization.arrayToDataTable([
-			{% for key, value in data["overall_rating"].items() %}
-				{% if value is string %}
-					['{{ key }}', '{{ value }}'],
-				{% else %}
-					['{{ key }}', {{ value }}],
-				{% endif %}
-			{% endfor %}
-        ]);
+         function drawOverallRatingChart() {
+           var data = google.visualization.arrayToDataTable([
+      {% for key, value in data["overall_rating"].items() %}
+      	{% if value is string %}
+      		['{{ key }}', '{{ value }}'],
+      	{% else %}
+      		['{{ key }}', {{ value }}],
+      	{% endif %}
+      {% endfor %}
+           ]);
 
-        var options = {
-          title: 'Overall Rating',
-          is3D: true,
-          pieStartAngle: 100,
-          /*pieSliceText: 'label',*/
-          fontName: 'sans-serif',
-          fontSize: '15',
-            slices: {  
-                2: {offset: 0.2},
-                3: {offset: 0.3}
-            },
-        };
+           var options = {
+             title: 'Overall Rating',
+             is3D: true,
+             pieStartAngle: 100,
+             /*pieSliceText: 'label',*/
+             fontName: 'sans-serif',
+             fontSize: '15',
+               slices: {
+                   2: {offset: 0.2},
+                   3: {offset: 0.3}
+               },
+           };
 
-        var chart = new google.visualization.PieChart(document.getElementById('piechart_3d2'));
-        chart.draw(data, options);
-      }
+           var chart = new google.visualization.PieChart(document.getElementById('piechart_3d2'));
+           chart.draw(data, options);
+         }
 
-       function drawOverallSentimentChart() {
-        var data = google.visualization.arrayToDataTable([
-			{% for key, value in data["overall_sentiment"].items() %}
-				{% if value is string %}
-					['{{ key }}', '{{ value }}'],
-				{% else %}
-					['{{ key }}', {{ value }}],
-				{% endif %}
-			{% endfor %}
-        ]);
+         function drawOverallSentimentChart() {
+           var data = google.visualization.arrayToDataTable([
+      {% for key, value in data["overall_sentiment"].items() %}
+      	{% if value is string %}
+      		['{{ key }}', '{{ value }}'],
+      	{% else %}
+      		['{{ key }}', {{ value }}],
+      	{% endif %}
+      {% endfor %}
+           ]);
 
-        var options = {
-          title: 'Overall Sentiment Scores',
-          is3D: true,
-          pieStartAngle: 100,
-          pieSliceText: 'label',
-          fontName: 'sans-serif',
-          fontSize: '15',
-            slices: {  
-                2: {offset: 0.2},
-                3: {offset: 0.3}
-            }
-        };
+           var options = {
+             title: 'Overall Sentiment Scores',
+             is3D: true,
+             pieStartAngle: 100,
+             pieSliceText: 'label',
+             fontName: 'sans-serif',
+             fontSize: '15',
+               slices: {
+                   2: {offset: 0.2},
+                   3: {offset: 0.3}
+               }
+           };
 
-        var chart = new google.visualization.PieChart(document.getElementById('piechart_3d3'));
-        chart.draw(data, options);
-      }      
+           var chart = new google.visualization.PieChart(document.getElementById('piechart_3d3'));
+           chart.draw(data, options);
+         }
+
+         function drawCommentForPresentingSentimentChart() {
+           var data = google.visualization.arrayToDataTable([
+      {% for key, value in data["comment_for_presenting_sentiment"].items() %}
+      	{% if value is string %}
+      		['{{ key }}', '{{ value }}'],
+      	{% else %}
+      		['{{ key }}', {{ value }}],
+      	{% endif %}
+      {% endfor %}
+           ]);
+
+           var options = {
+             title: 'Comment For Presenting Sentiment Scores',
+             is3D: true,
+             pieStartAngle: 100,
+             pieSliceText: 'label',
+             fontName: 'sans-serif',
+             fontSize: '15',
+               slices: {
+                   2: {offset: 0.2},
+                   3: {offset: 0.3}
+               }
+           };
+
+           var chart = new google.visualization.PieChart(document.getElementById('piechart_3d4'));
+           chart.draw(data, options);
+         }
+
+         function drawBriefLearntSentimentChart() {
+           var data = google.visualization.arrayToDataTable([
+      {% for key, value in data["brief_learnt_sentiment"].items() %}
+      	{% if value is string %}
+      		['{{ key }}', '{{ value }}'],
+      	{% else %}
+      		['{{ key }}', {{ value }}],
+      	{% endif %}
+      {% endfor %}
+           ]);
+
+           var options = {
+             title: 'Brief Learnt Sentiment Scores',
+             is3D: true,
+             pieStartAngle: 100,
+             pieSliceText: 'label',
+             fontName: 'sans-serif',
+             fontSize: '15',
+               slices: {
+                   2: {offset: 0.2},
+                   3: {offset: 0.3}
+               }
+           };
+
+           var chart = new google.visualization.PieChart(document.getElementById('piechart_3d5'));
+           chart.draw(data, options);
+         }
+
+         function drawSuggestionForPresentingSentimentChart() {
+           var data = google.visualization.arrayToDataTable([
+      {% for key, value in data["suggestion_for_presenting_sentiment"].items() %}
+      	{% if value is string %}
+      		['{{ key }}', '{{ value }}'],
+      	{% else %}
+      		['{{ key }}', {{ value }}],
+      	{% endif %}
+      {% endfor %}
+           ]);
+
+           var options = {
+             title: 'Suggestion For Presenting Sentiment Scores',
+             is3D: true,
+             pieStartAngle: 100,
+             pieSliceText: 'label',
+             fontName: 'sans-serif',
+             fontSize: '15',
+               slices: {
+                   2: {offset: 0.2},
+                   3: {offset: 0.3}
+               }
+           };
+
+           var chart = new google.visualization.PieChart(document.getElementById('piechart_3d6'));
+           chart.draw(data, options);
+         }
     </script>
-</head>
-<body>
-    <center>
-        <h3 style="margin: 10px 0 0 10px">Tech Tuesday Reviews Analysis</h3>
-        <h4 style="margin: 10px 0 0 10px">Presenter Name : {{ presenter}}</h4>
-        <h4 style="margin: 10px 0 0 10px">Total Reviews : {{ reviews }} </h4>
-    </center>
-    <div class="row" style="margin: 10px 0 0 10px;">
-		<div id="piechart_3d" class="column"></div>
-        <div id="piechart_3d1" class="column"></div>
+  </head>
+  <body>
+    <div style="margin-left: auto; margin-right: auto; text-align: center">
+      <h3 style="margin: 10px 0 0 10px">Tech Tuesday Reviews Analysis</h3>
+      <h4 style="margin: 10px 0 0 10px">Presenter Name : {{ presenter}}</h4>
+      <h4 style="margin: 10px 0 0 10px">Total Reviews : {{ reviews }}</h4>
     </div>
-    <div class="row" style="margin: 10px 0 0 10px;">
-        <div id="piechart_3d2" class="column"></div>
-        <div id="piechart_3d3" class="column"></div>
-	</div>
+    <div class="row" style="margin: 10px 0 0 10px">
+      <div id="piechart_3d" class="column"></div>
+      <div id="piechart_3d1" class="column"></div>
+    </div>
+    <div class="row" style="margin: 10px 0 0 10px">
+      <div id="piechart_3d2" class="column"></div>
+    </div>
+    <div class="row" style="margin: 10px 0 0 10px">
+      <div id="piechart_3d4" class="column"></div>
+      <div id="piechart_3d5" class="column"></div>
+    </div>
+    <div class="row" style="margin: 10px 0 0 10px">
+      <div id="piechart_3d6" class="column"></div>
+      <div id="piechart_3d3" class="column"></div>
+    </div>
 
     <!--===============================================================================================-->
-	<script src="{{url_for('static', filename='vendor/jquery/jquery-3.2.1.min.js') }}"></script>
+    <script src="{{url_for('static', filename='vendor/jquery/jquery-3.2.1.min.js') }}"></script>
     <!--===============================================================================================-->
-	<script src="{{url_for('static', filename='vendor/bootstrap/js/popper.js') }}"></script>
-	<script src="{{url_for('static', filename='vendor/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{url_for('static', filename='vendor/bootstrap/js/popper.js') }}"></script>
+    <script src="{{url_for('static', filename='vendor/bootstrap/js/bootstrap.min.js') }}"></script>
     <!--===============================================================================================-->
-	<script src="{{url_for('static', filename='vendor/select2/select2.min.js') }}"></script>
+    <script src="{{url_for('static', filename='vendor/select2/select2.min.js') }}"></script>
     <!--===============================================================================================-->
-	<script src="{{url_for('static', filename='vendor/tilt/tilt.jquery.min.js') }}"></script>
-	<script >
-		$('.js-tilt').tilt({
-			scale: 1.1
-		})
-	</script>
+    <script src="{{url_for('static', filename='vendor/tilt/tilt.jquery.min.js') }}"></script>
+    <script>
+      $(".js-tilt").tilt({
+        scale: 1.1,
+      });
+    </script>
 
     <!--===============================================================================================-->
-	<script src="js/main.js"></script>
-</body>
+    <script src="js/main.js"></script>
+  </body>
 </html>

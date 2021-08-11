@@ -3,6 +3,13 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
+        <entry key="C:\Users\admin1\Documents\nltk_exercise\27 July (Responses) - Form Responses 1.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="C:\Users\admin1\Documents\nltk_exercise\tech-tuesday-review-analysis-latest\Reetma 13 July (Responses) - Form Responses 1.csv">
           <value>
             <Attribute>
@@ -10,7 +17,7 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="C:\Users\admin1\Downloads\sample_csv.csv">
+        <entry key="C:\Users\admin1\Downloads\20 July (Responses) - Form Responses 1.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
