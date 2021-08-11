@@ -13,3 +13,11 @@ A
 configurations.py,f\d\fd9f61eb14ad7473f2e9e8efbbf323e6816bf732
 7
 wsgi.py,4\9\491d41343a6a914bfa8b19169cde1c8086bdb8b7
+O
+templates/google_pie_chart.html,7\c\7c05baac81d5929784fb048e1cad6edf3ba2869c
+D
+templates/index.html,f\6\f69b8ce2e31684ae06f1b3e84821e07e3dfddb2f
+C
+static/css/util.css,0\a\0a5fee9c6229e12e2c2c84bcf5712dd217bc4a51
+C
+static/css/main.css,1\d\1d911fa3e8e9e880e642b3cfb08a49276784f29a
