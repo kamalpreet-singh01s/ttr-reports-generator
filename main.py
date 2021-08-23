@@ -9,7 +9,6 @@ app = Flask(__name__)
 CORS(app)
 app.config.from_object(DevelopmentConfig)
 
-
 @app.route("/")
 def index():
     host_url = request.host_url
@@ -23,7 +22,9 @@ def sentiment_analyzer(data):
 
 @app.route("/tech_tuesday_reviews_analysis", methods=["POST"])
 def csv_analysis():
+    global presenter_name, presenter_name
     uploaded_file = request.files['csv_file']
+    topic_name = request.form['topic_name']
     if not uploaded_file:
         return "No file Selected"
     stream = io.StringIO(
@@ -64,7 +65,6 @@ def csv_analysis():
     sp_positive_sentiment_counter = 0
 
     total_rows = 0
-
     csv_input = csv.DictReader(stream)
     for row in csv_input:
         presenter_name = row['presenter_name']
@@ -157,7 +157,7 @@ def csv_analysis():
         'Very Good': cr_very_good_counter,
         'Good': cr_good_counter,
         'Fair': cr_fair_counter,
-        'Poor': cr_poor_counter
+        'Poor': cr_poor_counter,
     }
     present_rate = {
         'Rating': 'Presenting Skills Rating',
@@ -213,7 +213,8 @@ def csv_analysis():
         "suggestion_for_presenting_sentiment": suggestion_for_presenting_sentiment
     }
 
-    return render_template('google_pie_chart.html', data=data, reviews=total_rows, presenter=presenter_name)
+    return render_template('google_pie_chart.html', data=data, reviews=total_rows, presenter=presenter_name,
+                           topic=topic_name)
 
 
 @app.route('/api/upload_csv_file', methods=['POST'])

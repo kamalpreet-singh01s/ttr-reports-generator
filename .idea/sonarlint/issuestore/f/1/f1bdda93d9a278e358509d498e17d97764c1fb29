@@ -1,5 +1,5 @@
 
-apython:S1192L"JDefine a constant instead of duplicating this literal 'very good' 3 times.(”Ô6
-gpython:S1192m"JDefine a constant instead of duplicating this literal 'Very Good' 6 times.(Ã”¨£şÿÿÿÿ
-qpython:S3776"TRefactor this function to reduce its Cognitive Complexity from 24 to the 15 allowed.(ïêÚ×şÿÿÿÿ
-mpython:S3776ƒ"TRefactor this function to reduce its Cognitive Complexity from 24 to the 15 allowed.(å—¡À
+apython:S1192y"JDefine a constant instead of duplicating this literal 'very good' 3 times.(”Ô6
+hpython:S1192"JDefine a constant instead of duplicating this literal 'Very Good' 6 times.(Áş‘öùÿÿÿÿ
+qpython:S3776"TRefactor this function to reduce its Cognitive Complexity from 36 to the 15 allowed.(ïêÚ×şÿÿÿÿ
+mpython:S3776Ş"TRefactor this function to reduce its Cognitive Complexity from 36 to the 15 allowed.(å—¡À
